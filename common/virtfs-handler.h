@@ -27,4 +27,4 @@ enum FileMove
 
 typedef long long offset_t;
 typedef int handle_t;
-typedef void (*LogFunc)(handle_t fd, ErrLevel level, const char *msg);
+typedef void (*LogFunc)(void *arg, handle_t fd, ErrLevel level, const char *msg);
