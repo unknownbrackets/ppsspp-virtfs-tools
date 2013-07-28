@@ -25,7 +25,7 @@ ProcessResult process(const char *iso, const char *output);
 int main(int argc, char *argv[])
 {
 	const char *iso;
-	const char *output = ".ppsspp-index.ini";
+	const char *output = ".ppsspp-index.lst";
 
 	switch (argc)
 	{
@@ -69,7 +69,7 @@ int main(int argc, char *argv[])
 
 void usage(const char *argv0)
 {
-	fprintf(stderr, "%s FILE.iso [.ppsspp-index.ini]\n", argv0);
+	fprintf(stderr, "%s FILE.iso [.ppsspp-index.lst]\n", argv0);
 	fprintf(stderr, "\n");
 	fprintf(stderr, "Generates an index file suitable for running an ISO as a directory.\n");
 	fprintf(stderr, "\n");
