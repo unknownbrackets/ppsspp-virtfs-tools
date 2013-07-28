@@ -1,0 +1,30 @@
+# Compiled Object files
+*.obj
+*.slo
+*.lo
+*.o
+
+# Compiled Dynamic libraries
+*.dll
+*.so
+*.so.*
+*.dylib
+
+# Compiled Static libraries
+*.lib
+*.lai
+*.la
+*.a
+
+# Temp and debugging files
+*.opensdf
+*.sdf
+*.cachefile
+*.ilk
+*.pdb
+
+# Executables
+*.exe
+*.out
+*.app
+/gen-index/ppsspp-gen-index
