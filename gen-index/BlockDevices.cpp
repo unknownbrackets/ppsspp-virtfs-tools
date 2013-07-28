@@ -33,7 +33,7 @@ BlockDevice *constructBlockDevice(const char *filename) {
 	if (!f)
 		return 0;
 	char buffer[4];
-	auto size = fread(buffer, 1, 4, f); //size_t
+	size_t size = fread(buffer, 1, 4, f);
 	fseek(f, 0, SEEK_SET);
 /*	if (!memcmp(buffer, "CISO", 4) && size == 4)
 		return new CISOFileBlockDevice(f);
