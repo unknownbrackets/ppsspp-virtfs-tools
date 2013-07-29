@@ -23,6 +23,7 @@ static void LOG(handle_t handle, ErrLevel level, const char *msg)
 #define lseek _lseek
 #define read _read
 #define O_RDONLY _O_RDONLY
+#define O_BINARY _O_BINARY
 #endif
 
 EXPORT bool Init(LogFunc logger, void *loggerArg)
@@ -42,7 +43,7 @@ EXPORT void Shutdown()
 EXPORT handle_t Open(const char *rootPath, const char *filename)
 {
 	std::string full = std::string(rootPath) + "/" + filename;
-	handle_t handle = (handle_t) open(full.c_str(), O_RDONLY, 0);
+	handle_t handle = (handle_t) open(full.c_str(), O_RDONLY | O_BINARY);
 	LOG(handle, L_DEBUG, "Opened file");
 	return handle;
 }
@@ -61,6 +62,14 @@ EXPORT offset_t Seek(handle_t handle, offset_t offset, FileMove origin)
 
 EXPORT offset_t Read(handle_t handle, void *data, offset_t size)
 {
+	offset_t bytes = 0;
+	int result = 0;
+	do
+	{
+		bytes += result;
+		result = read((int) handle, (char *)data + bytes, (unsigned int) (size - bytes));
+	}
+	while (result > 0);
 	LOG(handle, L_DEBUG, "Read from file");
-	return read((int) handle, data, (unsigned int) size);
+	return bytes;
 }
