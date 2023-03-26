@@ -6,15 +6,24 @@
 #endif
 #include <fcntl.h>
 #include <string>
+#include <vector>
 
 #include "../common/virtfs-handler.h"
 
-static LogFunc g_logger;
-static void *g_loggerArg;
+struct Logger {
+	LogFunc func;
+	void *arg;
+};
+
+static std::vector<Logger> g_loggers;
 
 static void LOG(handle_t handle, ErrLevel level, const char *msg)
 {
-	g_logger(g_loggerArg, handle, level, msg);
+	if (g_loggers.empty())
+		return;
+
+	const Logger &logger = g_loggers.back();
+	logger.func(logger.arg, handle, level, msg);
 }
 
 #ifdef _MSC_VER
@@ -26,18 +35,32 @@ static void LOG(handle_t handle, ErrLevel level, const char *msg)
 #define O_BINARY _O_BINARY
 #endif
 
-EXPORT bool Init(LogFunc logger, void *loggerArg)
+EXPORT int Version()
 {
-	g_logger = logger;
-	g_loggerArg = loggerArg;
+	return 2;
+}
+
+EXPORT bool Init(LogFunc loggerFunc, void *loggerArg)
+{
+	Logger logger;
+	logger.func = loggerFunc;
+	logger.arg = loggerArg;
+	g_loggers.push_back(logger);
 
 	LOG(-1, L_DEBUG, "passthru handler initialized");
 	return true;
 }
 
-EXPORT void Shutdown()
+EXPORT void Shutdown(void *loggerArg)
 {
 	LOG(-1, L_DEBUG, "passthru handler shutdown");
+
+	for (size_t i = 0; i < g_loggers.size(); ++i) {
+		if (g_loggers[i].arg == loggerArg) {
+			g_loggers.erase(g_loggers.begin() + i);
+			break;
+		}
+	}
 }
 
 EXPORT handle_t Open(const char *rootPath, const char *filename)
